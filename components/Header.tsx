@@ -8,7 +8,7 @@ import { Boxes } from "lucide-react";
 export const Header = () => {
   return (
     <header className="flex items-center py-2 fixed justify-between w-screen">
-      <Link className="flex items-center space-x-2 pl-5" href="/">
+      <Link className="flex items-center space-x-2 pl-10" href="/">
         <div className=" w-fit">
           <Boxes />
         </div>
