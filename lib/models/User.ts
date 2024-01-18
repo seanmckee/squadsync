@@ -6,12 +6,15 @@ const AvailabilityRangeSchema = new Schema({
 });
 
 const UserSchema = new Schema({
-  email: { type: String, required: true, unique: true },
   clerkID: { type: String, required: true, unique: true },
-  name: { type: String },
+  email: { type: String, required: true, unique: true },
+  username: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  bio: { type: String },
   mood: { type: String },
   friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
   availability: [AvailabilityRangeSchema], // Array of availability ranges
+  onboarded: { type: Boolean, default: false },
 });
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema);

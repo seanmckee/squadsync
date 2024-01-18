@@ -20,7 +20,7 @@ export const Header = () => {
           <ThemeToggler />
           <UserButton afterSignOutUrl="/" />
           <SignedOut>
-            <SignInButton afterSignInUrl="/" mode="modal" />
+            <SignInButton afterSignInUrl="/dashboard" mode="modal" />
           </SignedOut>
         </div>
       </div>

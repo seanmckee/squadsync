@@ -2,8 +2,11 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Boxes } from "lucide-react";
 import Link from "next/link";
+import { SignUpButton, currentUser } from "@clerk/nextjs";
 
-export default function Home() {
+export default async function Home() {
+  const user = await currentUser();
+
   return (
     <main className="flex flex-col gap-y-10 items-center justify-center h-screen text-center">
       <div className="animate-bounce duration-3000">
@@ -21,12 +24,19 @@ export default function Home() {
           Where Moods Meet Moments and Friendship Finds its Rhythm
         </p>
       </div>
-
-      <Link href="/signup">
-        <Button className="text-white text-lg py-7 rounded-2xl" size="lg">
-          Get Started!
-        </Button>
-      </Link>
+      {user ? (
+        <Link href={"/dashboard"}>
+          <Button className="text-white text-lg py-7 rounded-2xl" size="lg">
+            Get Started!
+          </Button>
+        </Link>
+      ) : (
+        <SignUpButton redirectUrl="/dashboard">
+          <Button className="text-white text-lg py-7 rounded-2xl" size="lg">
+            Get Started!
+          </Button>
+        </SignUpButton>
+      )}
     </main>
   );
 }
