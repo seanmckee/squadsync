@@ -38,7 +38,7 @@ const Sidebar = () => {
           </li>
         </Link>
 
-        <Link href="/Account">
+        <Link href="/account">
           <li className="cursor-pointer hover:text-white hover:bg-blue-600 dark:hover:bg-[#3c4c74] rounded-md p-5 flex text-xl items-center">
             <User />
             <p className="pl-2">Account</p>
