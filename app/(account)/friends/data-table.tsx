@@ -23,15 +23,18 @@ import {
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { Input } from "@/components/ui/input";
+import { AddFriend } from "./add-friend";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  currentUserID: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  currentUserID,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -55,7 +58,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 justify-between">
         <Input
           placeholder="Filter Names..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -64,6 +67,8 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+        {/* <Button className="text-white">Add Friend</Button> */}
+        <AddFriend currentUserID={currentUserID} />
       </div>
       <div className="rounded-md border">
         <Table>

@@ -13,7 +13,11 @@ const UserSchema = new Schema({
   bio: { type: String },
   mood: { type: String },
   friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  groups: [{ type: Schema.Types.ObjectId, ref: "Group" }],
   availability: [AvailabilityRangeSchema], // Array of availability ranges
+  friendRequests: [{ type: Schema.Types.ObjectId, ref: "Notification" }],
+  groupInvites: [{ type: Schema.Types.ObjectId, ref: "Notification" }],
+
   onboarded: { type: Boolean, default: false },
 });
 

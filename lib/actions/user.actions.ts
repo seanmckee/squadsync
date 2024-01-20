@@ -38,6 +38,21 @@ export async function updateUser(
   //   }
 }
 
+export async function getUserIDFromUsername(username: string) {
+  try {
+    const user = await User.findOne({ username: username.toLowerCase() });
+    if (user) {
+      return user._id.toString();
+    } else {
+      console.log("user not found");
+      return null;
+    }
+  } catch (error) {
+    console.error("Failed to get user:", error);
+    return null;
+  }
+}
+
 export async function fetchUser(clerkID: string) {
   try {
     connectToDB();
