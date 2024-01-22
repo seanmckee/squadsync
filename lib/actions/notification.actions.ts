@@ -2,6 +2,7 @@
 
 import User from "../models/User";
 import Notification from "../models/Notification";
+import { ObjectId } from "mongoose";
 
 export async function sendFriendRequest(
   senderID: string,
@@ -39,6 +40,13 @@ export async function sendFriendRequest(
     // Update the sender's friendRequests array
     await User.findByIdAndUpdate(
       senderID,
+      { $push: { friendRequests: newFriendRequest._id } },
+      { new: true }
+    );
+
+    // Update the recipient's friendRequests array
+    await User.findByIdAndUpdate(
+      recipientID,
       { $push: { friendRequests: newFriendRequest._id } },
       { new: true }
     );
@@ -107,5 +115,43 @@ export async function respondToFriendRequest(
   } catch (error: any) {
     console.error("Error responding to friend request:", error.message);
     throw error; // You may choose to handle or propagate the error as needed
+  }
+}
+
+// make a server action to take array of notification ids and return usernames/names
+
+export async function getFriendRequests(notificationIDs: ObjectId[]) {
+  try {
+    const friendRequests = await Notification.find({
+      _id: { $in: notificationIDs },
+      type: "friendRequest",
+    }).populate("sender", "username name");
+
+    const senderInfo = friendRequests.map((request) => {
+      // Access sender's information directly from the populated 'sender' field
+      const sender = request.sender as {
+        username: string;
+        name: string;
+      } | null;
+
+      if (sender) {
+        return {
+          username: sender.username,
+          name: sender.name,
+        };
+      } else {
+        // Handle the case where sender is not found or null
+        console.log("sender not found");
+        return null;
+      }
+    });
+
+    // Remove null values if needed
+    const filteredSenderInfo = senderInfo.filter((info) => info !== null);
+
+    return filteredSenderInfo;
+  } catch (error: any) {
+    console.error("Error getting friend requests:", error.message);
+    throw error;
   }
 }
