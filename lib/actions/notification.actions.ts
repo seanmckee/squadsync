@@ -58,25 +58,25 @@ export async function sendFriendRequest(
   }
 }
 
-// respond to friend request (friendReqestAction)
 export async function respondToFriendRequest(
-  userID: string,
-  notificationID: string,
+  senderID: ObjectId,
+  recipientID: ObjectId,
   response: "accept" | "deny"
 ): Promise<void> {
   try {
-    // Check if the user exists
-    const userExists = await User.exists({ _id: userID });
-    if (!userExists) {
-      throw new Error("User does not exist.");
+    // Check if the sender and recipient users exist
+    const senderExists = await User.exists({ _id: senderID });
+    const recipientExists = await User.exists({ _id: recipientID });
+
+    if (!senderExists || !recipientExists) {
+      throw new Error("Sender or recipient does not exist.");
     }
 
     // Find the friend request notification
     const friendRequest = await Notification.findOne({
-      _id: notificationID,
-      recipient: userID,
+      sender: senderID,
+      recipient: recipientID,
       type: "friendRequest",
-      read: false, // Assuming unread friend requests
     });
 
     if (!friendRequest) {
@@ -85,28 +85,45 @@ export async function respondToFriendRequest(
 
     // Handle the response
     if (response === "accept") {
-      // Update the user's friends array
+      // Update the recipient's friends array
       await User.findByIdAndUpdate(
-        userID,
-        { $push: { friends: friendRequest.sender } },
+        recipientID,
+        { $push: { friends: senderID } },
         { new: true }
       );
 
       // Update the sender's friends array
       await User.findByIdAndUpdate(
-        friendRequest.sender,
-        { $push: { friends: userID } },
+        senderID,
+        { $push: { friends: recipientID } },
+        { new: true }
+      );
+
+      // Delete the friend request notification
+      await Notification.findByIdAndDelete(friendRequest._id);
+
+      // Update the recipient's friendRequests array
+      await User.findByIdAndUpdate(
+        recipientID,
+        { $pull: { friendRequests: friendRequest._id } },
+        { new: true }
+      );
+
+      // Update the sender's friendRequests array
+      await User.findByIdAndUpdate(
+        senderID,
+        { $pull: { friendRequests: friendRequest._id } },
         { new: true }
       );
 
       console.log("Friend request accepted successfully.");
     } else if (response === "deny") {
       console.log("Friend request denied successfully.");
-      await Notification.findByIdAndDelete(notificationID);
+      await Notification.findByIdAndDelete(friendRequest._id);
 
       await User.findByIdAndUpdate(
-        userID,
-        { $pull: { friendRequests: notificationID } },
+        recipientID,
+        { $pull: { friendRequests: friendRequest._id } },
         { new: true }
       );
     } else {
@@ -117,8 +134,8 @@ export async function respondToFriendRequest(
     throw error; // You may choose to handle or propagate the error as needed
   }
 }
-
-// make a server action to take array of notification ids and return usernames/names and whether it is outgoing or incoming
+// make a server action to take array of notification ids and return
+// usernames/names and whether it is outgoing or incoming
 
 export async function getFriendRequests(notificationIDs: ObjectId[]) {
   try {

@@ -3,10 +3,15 @@ import { DataTable } from "./data-table";
 import { friends } from "./data";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
-import { getFriendRequests } from "@/lib/actions/notification.actions";
+import {
+  getFriendRequests,
+  respondToFriendRequest,
+} from "@/lib/actions/notification.actions";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
-
+import { ObjectId } from "mongoose";
+import FriendRequestButtons from "./FriendRequestButtons";
+import AcceptButton from "./(buttons)/AcceptButton";
 // async function getData(): Promise<Friend[]> {
 //   // Fetch data from your API here.
 //   return [
@@ -31,7 +36,7 @@ export default async function Friends() {
   // const data = await getData();
   const data = friends;
 
-  // make a server action to take array of notification ids and return usernames/names
+  // reject friend request
 
   return (
     <div className="container mx-auto py-10">
@@ -61,9 +66,21 @@ export default async function Friends() {
 
             {userInfo.username === friendRequest.recipient.username ? (
               <div className="flex gap-3">
-                <Button className="text-white">
+                {/* <Button
+                  onClick={() =>
+                    acceptFriendRequest(
+                      userInfo.sender._id,
+                      userInfo.recipient._id
+                    )
+                  }
+                  className="text-white"
+                >
                   <Check />
-                </Button>
+                </Button> */}
+                <AcceptButton
+                  senderID={friendRequest.sender._id.toString()}
+                  recipientID={friendRequest.recipient._id.toString()}
+                />
                 <Button variant={"destructive"} className="text-white">
                   <X />
                 </Button>
@@ -76,6 +93,11 @@ export default async function Friends() {
                 </Button>
               </div>
             )}
+            {/* <FriendRequestButtons
+              userInfo={userInfo}
+              friendRequest={friendRequest}
+              acceptFriendRequest={acceptFriendRequest}
+            /> */}
           </div>
         ))}
       </div>
