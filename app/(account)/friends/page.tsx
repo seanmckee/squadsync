@@ -27,9 +27,7 @@ export default async function Friends() {
   }
 
   const userInfo = await fetchUser(user.id);
-  console.log("here is the user info: ", userInfo);
   const friendRequests = await getFriendRequests(userInfo.friendRequests);
-  console.log("here are the friend requests: ", friendRequests);
   // const data = await getData();
   const data = friends;
 

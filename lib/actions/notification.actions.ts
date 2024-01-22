@@ -118,7 +118,7 @@ export async function respondToFriendRequest(
   }
 }
 
-// make a server action to take array of notification ids and return usernames/names
+// make a server action to take array of notification ids and return usernames/names and whether it is outgoing or incoming
 
 export async function getFriendRequests(notificationIDs: ObjectId[]) {
   try {
