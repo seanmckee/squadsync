@@ -12,7 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { sendFriendRequest } from "@/lib/actions/notification.actions";
 import { fetchUser, getUserIDFromUsername } from "@/lib/actions/user.actions";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface AddFriendProps {
   currentUserID: string;
@@ -21,6 +23,7 @@ interface AddFriendProps {
 export function AddFriend({ currentUserID }: AddFriendProps) {
   const [username, setUsername] = useState("");
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const onSubmit = async () => {
     try {
@@ -28,15 +31,17 @@ export function AddFriend({ currentUserID }: AddFriendProps) {
 
       // using username, get recipient's id from db
       const recipientID = await getUserIDFromUsername(username);
-      console.log(
-        "current user id: ",
-        currentUserID,
-        "recipient id: ",
-        recipientID
-      );
+      // console.log(
+      //   "current user id: ",
+      //   currentUserID,
+      //   "recipient id: ",
+      //   recipientID
+      // );
       const currentUserMongo = await fetchUser(currentUserID);
       const currentUserMongoID = currentUserMongo._id;
       await sendFriendRequest(currentUserMongoID, recipientID);
+      toast.success("Friend request sent!");
+      router.refresh();
     } catch (error) {
       console.error(error);
     }

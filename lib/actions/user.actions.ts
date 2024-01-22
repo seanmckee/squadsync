@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import User from "../models/User";
 import { connectToDB } from "../mongodb";
+import { ObjectId } from "mongoose";
 
 export async function updateUser(
   clerkID: string,
@@ -58,4 +59,22 @@ export async function fetchUser(clerkID: string) {
     connectToDB();
     return await User.findOne({ clerkID: clerkID });
   } catch (error) {}
+}
+
+export async function getFriends(userID: ObjectId) {
+  try {
+    // Find the user by ID and select the 'friends' array
+    const user = await User.findById(userID).select("friends");
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Extract and return the 'friends' array
+    const friends = user.friends || [];
+    return friends;
+  } catch (error: any) {
+    console.error("Error getting friends:", error.message);
+    throw error;
+  }
 }
