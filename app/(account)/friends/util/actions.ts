@@ -1,7 +1,7 @@
 import { respondToFriendRequest } from "@/lib/actions/notification.actions";
 import { ObjectId } from "mongoose";
 
-const acceptFriendRequest = async (
+export const acceptFriendRequest = async (
   senderID: ObjectId,
   recipientID: ObjectId
 ) => {
@@ -12,4 +12,13 @@ const acceptFriendRequest = async (
   }
 };
 
-export default acceptFriendRequest;
+export const denyFriendRequest = async (
+  senderID: ObjectId,
+  recipientID: ObjectId
+) => {
+  try {
+    await respondToFriendRequest(senderID, recipientID, "deny");
+  } catch (error) {
+    console.log(error);
+  }
+};

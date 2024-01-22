@@ -99,23 +99,6 @@ export async function respondToFriendRequest(
         { new: true }
       );
 
-      // Delete the friend request notification
-      await Notification.findByIdAndDelete(friendRequest._id);
-
-      // Update the recipient's friendRequests array
-      await User.findByIdAndUpdate(
-        recipientID,
-        { $pull: { friendRequests: friendRequest._id } },
-        { new: true }
-      );
-
-      // Update the sender's friendRequests array
-      await User.findByIdAndUpdate(
-        senderID,
-        { $pull: { friendRequests: friendRequest._id } },
-        { new: true }
-      );
-
       console.log("Friend request accepted successfully.");
     } else if (response === "deny") {
       console.log("Friend request denied successfully.");
@@ -129,6 +112,23 @@ export async function respondToFriendRequest(
     } else {
       throw new Error("Invalid response type.");
     }
+
+    // Delete the friend request notification
+    await Notification.findByIdAndDelete(friendRequest._id);
+
+    // Update the recipient's friendRequests array
+    await User.findByIdAndUpdate(
+      recipientID,
+      { $pull: { friendRequests: friendRequest._id } },
+      { new: true }
+    );
+
+    // Update the sender's friendRequests array
+    await User.findByIdAndUpdate(
+      senderID,
+      { $pull: { friendRequests: friendRequest._id } },
+      { new: true }
+    );
   } catch (error: any) {
     console.error("Error responding to friend request:", error.message);
     throw error; // You may choose to handle or propagate the error as needed

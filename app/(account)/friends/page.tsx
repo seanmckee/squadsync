@@ -12,6 +12,7 @@ import { Check, X } from "lucide-react";
 import { ObjectId } from "mongoose";
 import FriendRequestButtons from "./FriendRequestButtons";
 import AcceptButton from "./(buttons)/AcceptButton";
+import RejectButton from "./(buttons)/RejectButton";
 // async function getData(): Promise<Friend[]> {
 //   // Fetch data from your API here.
 //   return [
@@ -81,23 +82,21 @@ export default async function Friends() {
                   senderID={friendRequest.sender._id.toString()}
                   recipientID={friendRequest.recipient._id.toString()}
                 />
-                <Button variant={"destructive"} className="text-white">
-                  <X />
-                </Button>
+
+                <RejectButton
+                  senderID={friendRequest.sender._id.toString()}
+                  recipientID={friendRequest.recipient._id.toString()}
+                />
               </div>
             ) : (
               <div className="flex gap-3 items-center">
                 <p className="text-sm text-slate-400">pending ...</p>
-                <Button variant={"destructive"} className="text-white">
-                  <X />
-                </Button>
+                <RejectButton
+                  senderID={friendRequest.sender._id.toString()}
+                  recipientID={friendRequest.recipient._id.toString()}
+                />
               </div>
             )}
-            {/* <FriendRequestButtons
-              userInfo={userInfo}
-              friendRequest={friendRequest}
-              acceptFriendRequest={acceptFriendRequest}
-            /> */}
           </div>
         ))}
       </div>
