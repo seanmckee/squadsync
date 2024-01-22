@@ -125,23 +125,47 @@ export async function getFriendRequests(notificationIDs: ObjectId[]) {
     const friendRequests = await Notification.find({
       _id: { $in: notificationIDs },
       type: "friendRequest",
-    }).populate("sender", "username name");
+    }).populate([
+      { path: "sender", select: "username name _id" },
+      { path: "recipient", select: "username name _id" },
+    ]);
 
     const senderInfo = friendRequests.map((request) => {
-      // Access sender's information directly from the populated 'sender' field
-      const sender = request.sender as {
-        username: string;
-        name: string;
-      } | null;
+      const sender = request.sender as
+        | (Document & {
+            username: string;
+            name: string;
+            _id: ObjectId;
+          })
+        | null;
 
-      if (sender) {
+      const recipient = request.recipient as
+        | (Document & {
+            username: string;
+            name: string;
+            _id: ObjectId;
+          })
+        | null;
+
+      if (sender && recipient) {
+        const isOutgoing = sender._id.toString() === request.sender.toString();
+        const requestType = isOutgoing ? "outgoing" : "incoming";
         return {
-          username: sender.username,
-          name: sender.name,
+          sender: {
+            username: sender.username,
+            name: sender.name,
+            _id: sender._id,
+          },
+          recipient: {
+            username: recipient.username,
+            name: recipient.name,
+            _id: recipient._id,
+          },
+          requestType,
         };
       } else {
-        // Handle the case where sender is not found or null
-        console.log("sender not found");
+        // Handle the case where sender or recipient is not found or null
+        console.log("sender or recipient not found");
         return null;
       }
     });

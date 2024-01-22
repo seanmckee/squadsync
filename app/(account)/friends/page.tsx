@@ -27,8 +27,7 @@ export default async function Friends() {
   }
 
   const userInfo = await fetchUser(user.id);
-  console.log("here is the userinfo: ", userInfo);
-
+  console.log("here is the user info: ", userInfo);
   const friendRequests = await getFriendRequests(userInfo.friendRequests);
   console.log("here are the friend requests: ", friendRequests);
   // const data = await getData();
@@ -46,21 +45,39 @@ export default async function Friends() {
             className="flex border p-3 rounded-md justify-between"
             key={friendRequest.id}
           >
-            <div>
-              <p>{friendRequest.name}</p>
-              <p className="text-xs text-slate-400">
-                @{friendRequest.username}
-              </p>
-            </div>
+            {userInfo.username === friendRequest.recipient.username ? (
+              <div>
+                <p>{friendRequest.sender.name}</p>
+                <p className="text-xs text-slate-400">
+                  @{friendRequest.sender.username}
+                </p>
+              </div>
+            ) : (
+              <div>
+                <p>{friendRequest.recipient.name}</p>
+                <p className="text-xs text-slate-400">
+                  @{friendRequest.recipient.username}
+                </p>
+              </div>
+            )}
 
-            <div className="flex gap-3">
-              <Button className="text-white">
-                <Check />
-              </Button>
-              <Button variant={"destructive"} className="text-white">
-                <X />
-              </Button>
-            </div>
+            {userInfo.username === friendRequest.recipient.username ? (
+              <div className="flex gap-3">
+                <Button className="text-white">
+                  <Check />
+                </Button>
+                <Button variant={"destructive"} className="text-white">
+                  <X />
+                </Button>
+              </div>
+            ) : (
+              <div className="flex gap-3 items-center">
+                <p className="text-sm text-slate-400">pending ...</p>
+                <Button variant={"destructive"} className="text-white">
+                  <X />
+                </Button>
+              </div>
+            )}
           </div>
         ))}
       </div>
