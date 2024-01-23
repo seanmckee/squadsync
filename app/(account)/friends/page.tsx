@@ -1,7 +1,7 @@
 import { Friend, columns } from "./columns";
 import { DataTable } from "./data-table";
 import { friends } from "./data";
-import { fetchUser } from "@/lib/actions/user.actions";
+import { fetchUser, getFriendsWithDetails } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import {
   getFriendRequests,
@@ -34,6 +34,7 @@ export default async function Friends() {
 
   const userInfo = await fetchUser(user.id);
   const friendRequests = await getFriendRequests(userInfo.friendRequests);
+  const friendsWithDetails = await getFriendsWithDetails(userInfo._id);
   // const data = await getData();
   const data = friends;
 
@@ -101,7 +102,11 @@ export default async function Friends() {
         ))}
       </div>
 
-      <DataTable columns={columns} data={data} currentUserID={user.id} />
+      <DataTable
+        columns={columns}
+        data={friendsWithDetails}
+        currentUserID={user.id}
+      />
     </div>
   );
 }

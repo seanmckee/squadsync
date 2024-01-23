@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import User from "../models/User";
 import { connectToDB } from "../mongodb";
 import { ObjectId } from "mongoose";
+import { currentUser } from "@clerk/nextjs";
 
 export async function updateUser(
   clerkID: string,
@@ -23,6 +24,7 @@ export async function updateUser(
         name: name,
         bio: bio,
         onboarded: true,
+        mood: "new",
       },
       { upsert: true }
     );
@@ -61,20 +63,65 @@ export async function fetchUser(clerkID: string) {
   } catch (error) {}
 }
 
-export async function getFriends(userID: ObjectId) {
+export async function getFriendsWithDetails(userID: ObjectId) {
   try {
-    // Find the user by ID and select the 'friends' array
-    const user = await User.findById(userID).select("friends");
+    // Find the user by ID and populate the 'friends' array along with 'username', 'name', and 'mood'
+    const user = await User.findById(userID).populate({
+      path: "friends",
+      select: "username name mood",
+    });
 
     if (!user) {
       throw new Error("User not found");
     }
 
-    // Extract and return the 'friends' array
+    // Extract and return the 'friends' array with required details
     const friends = user.friends || [];
-    return friends;
+    const friendsWithDetails = friends.map(
+      (friend: any) =>
+        friend && {
+          username: friend.username,
+          name: friend.name,
+          mood: friend.mood,
+        }
+    );
+
+    return friendsWithDetails.filter(Boolean); // Remove potential undefined values
   } catch (error: any) {
     console.error("Error getting friends:", error.message);
     throw error;
   }
 }
+
+// remove friend from user friend array and the friends friend array
+export const removeFriend = async (friendName: string) => {
+  try {
+    // Find the friend by name to get their ID
+    const friend = await User.findOne({ name: friendName });
+    const user = await currentUser();
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const userInfo = await fetchUser(user.id);
+
+    if (!friend) {
+      throw new Error(`Friend with username ${friendName} not found`);
+    }
+    console.log("friend:", friend);
+
+    const friendID = friend._id;
+
+    // Remove friend from user's friend array
+    await User.findByIdAndUpdate(userInfo._id, {
+      $pull: { friends: friendID },
+    });
+
+    // Remove user from friend's friend array
+    await User.findByIdAndUpdate(friendID, {
+      $pull: { friends: userInfo._id },
+    });
+  } catch (error: any) {
+    console.error("Error removing friend:", error.message);
+    throw error;
+  }
+};

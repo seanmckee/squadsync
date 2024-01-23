@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { AddFriend } from "./add-friend";
+import { ObjectId } from "mongoose";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
