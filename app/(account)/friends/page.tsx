@@ -13,18 +13,6 @@ import { ObjectId } from "mongoose";
 import FriendRequestButtons from "./FriendRequestButtons";
 import AcceptButton from "./(buttons)/AcceptButton";
 import RejectButton from "./(buttons)/RejectButton";
-// async function getData(): Promise<Friend[]> {
-//   // Fetch data from your API here.
-//   return [
-//     {
-//       id: "728ed52f",
-//       amount: 100,
-//       status: "pending",
-//       email: "m@example.com",
-//     },
-//     // ...
-//   ];
-// }
 
 export default async function Friends() {
   const user = await currentUser();

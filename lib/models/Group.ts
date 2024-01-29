@@ -11,6 +11,7 @@ const ActivitySchema = new Schema({
 
 const GroupSchema = new Schema({
   members: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  description: { type: String, required: true },
   name: { type: String, required: true },
   owner: { type: Schema.Types.ObjectId, ref: "User" },
   suggestedActivities: [{ type: Schema.Types.ObjectId, ref: "Activity" }],
