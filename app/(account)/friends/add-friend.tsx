@@ -43,6 +43,7 @@ export function AddFriend({ currentUserID }: AddFriendProps) {
       toast.success("Friend request sent!");
       router.refresh();
     } catch (error) {
+      toast.error("This User does not exist!");
       console.error(error);
     }
   };

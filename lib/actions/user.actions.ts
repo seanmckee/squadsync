@@ -24,7 +24,7 @@ export async function updateUser(
         name: name,
         bio: bio,
         onboarded: true,
-        mood: "new",
+        mood: "Exploration",
       },
       { upsert: true }
     );
@@ -122,6 +122,37 @@ export const removeFriend = async (friendName: string) => {
     });
   } catch (error: any) {
     console.error("Error removing friend:", error.message);
+    throw error;
+  }
+};
+
+export const setMood = async (mood: string) => {
+  console.log("mood:", mood);
+  try {
+    const user = await currentUser();
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const userInfo = await fetchUser(user.id);
+    await User.findByIdAndUpdate(userInfo._id, {
+      mood: mood,
+    });
+  } catch (error: any) {
+    console.error("Error setting mood:", error.message);
+    throw error;
+  }
+};
+
+export const getMood = async () => {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const userInfo = await fetchUser(user.id);
+    return userInfo.mood;
+  } catch (error: any) {
+    console.error("Error getting mood:", error.message);
     throw error;
   }
 };

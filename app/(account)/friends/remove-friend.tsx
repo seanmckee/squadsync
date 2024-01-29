@@ -13,6 +13,7 @@ import { currentUser } from "@clerk/nextjs";
 import { UserX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
+import toast from "react-hot-toast";
 
 interface RemoveFriendProps {
   friendName: string;
@@ -25,6 +26,7 @@ const RemoveFriend: React.FC<RemoveFriendProps> = ({ friendName }) => {
     console.log("removing friend");
     try {
       await removeFriend(friendName);
+      toast.success(`Removed ${friendName} from your friends list!`);
     } catch (error) {
       console.error(error);
     }
