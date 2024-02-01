@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,9 +13,12 @@ import { Plus } from "lucide-react";
 import NewGroup from "@/components/forms/NewGroup";
 
 const CreateGroup = () => {
+  const [open, setOpen] = useState(true);
+
+  const handleDialogClose = () => {};
   return (
     <div>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
             // onClick={createNewGroup}
@@ -32,7 +36,7 @@ const CreateGroup = () => {
               This will create a new group and add you as the owner.
             </DialogDescription>
           </DialogHeader>
-          <NewGroup />
+          <NewGroup setOpen={setOpen} />
         </DialogContent>
       </Dialog>
     </div>

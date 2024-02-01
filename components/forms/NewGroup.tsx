@@ -16,6 +16,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { createGroup } from "@/lib/actions/group.actions";
+import { Dispatch, SetStateAction } from "react";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -23,10 +24,10 @@ const formSchema = z.object({
 });
 
 interface Props {
-  ownerID: string;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const NewGroup = ({ ownerID }: Props) => {
+const NewGroup = ({ setOpen }: Props) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,7 +38,8 @@ const NewGroup = ({ ownerID }: Props) => {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     console.log(data);
-    await createGroup(data.name, data.description, ownerID);
+    await createGroup(data.name, data.description);
+    setOpen(false);
   }
   return (
     <Form {...form}>
@@ -74,7 +76,11 @@ const NewGroup = ({ ownerID }: Props) => {
             </FormItem>
           )}
         />
-        <Button className="text-white" type="submit">
+        <Button
+          onClick={() => setOpen(false)}
+          className="text-white"
+          type="submit"
+        >
           Create
         </Button>
       </form>
